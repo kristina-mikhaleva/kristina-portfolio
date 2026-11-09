@@ -209,11 +209,62 @@ async function init() {
     if(draft){try{data=await hydrateDraftMedia(data);}catch{/* Existing files remain usable when IndexedDB is disabled. */}}
     renderHeader();renderFooter();if(page==='home')renderHome();else if(page==='cases')renderCatalog();else renderCase();
     if(draft){const banner=document.createElement('div');banner.className='draft-banner';banner.innerHTML='Локальный черновик. Изменения не опубликованы. <a href="content-editor.html">Вернуться к редактору</a>';document.body.prepend(banner);}
-    $('#main').classList.add('route-enter');wireInteractions();revealSections();
+    $('#main').classList.add('route-enter');wireInteractions();revealSections();initAnalytics();
     if(location.hash){const target=document.getElementById(decodeURIComponent(location.hash.slice(1)));target?.scrollIntoView({behavior:'instant'});}
     document.documentElement.dataset.ready='true';
   }catch(error){console.error(error);$('#main').innerHTML=`<section class="wrap not-found"><h1>Не удалось загрузить портфолио</h1><p>Попробуйте обновить страницу.</p>${btn('Написать в Telegram','https://t.me/MikhalevaKS','lime',true)}</section>`;}
 }
 init();
 
+
+
+function initAnalytics() {
+  if (draft) return;
+  const counter = 114140959;
+  const key = 'portfolio-analytics-consent-v1';
+  const readConsent = () => { try { return localStorage.getItem(key); } catch { return null; } };
+  let active = false;
+  function start() {
+    if (active) return;
+    active = true;
+    window.ym = window.ym || function(){ (window.ym.a = window.ym.a || []).push(arguments); };
+    window.ym.l = Date.now();
+    const tag = document.createElement('script');
+    tag.async = true;
+    tag.src = 'https://mc.yandex.ru/metrika/tag.js?id=' + counter;
+    document.head.append(tag);
+    window.ym(counter, 'init', {clickmap:false, webvisor:false, trackLinks:true, accurateTrackBounce:true});
+  }
+  const style = document.createElement('style');
+  style.textContent = '.analytics-notice{position:fixed;z-index:150;bottom:16px;left:16px;right:16px;max-width:620px;margin:auto;background:#111;color:#f5f5f0;padding:22px;border-radius:22px;box-shadow:0 8px 40px #0003;font-size:15px;line-height:1.5}.analytics-notice[hidden]{display:none}.analytics-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.analytics-actions button{padding:12px 18px;border:1px solid #777;border-radius:30px;background:transparent;color:inherit;font:inherit;cursor:pointer}.analytics-actions .analytics-accept{background:#d3ff36;color:#111;border-color:#d3ff36}.analytics-settings{border:0;background:none;color:inherit;text-decoration:underline;font:inherit;cursor:pointer}.analytics-policy{max-width:700px;width:calc(100% - 32px);max-height:85vh;padding:28px;border:0;border-radius:24px;background:#f5f5f0;color:#111;line-height:1.6}.analytics-policy::backdrop{background:#0009}.analytics-policy h2{font-size:28px;line-height:1.2}.analytics-policy p{margin:16px 0}';
+  document.head.append(style);
+  const notice = document.createElement('section');
+  notice.className = 'analytics-notice';
+  notice.setAttribute('aria-label','Настройки аналитики');
+  notice.innerHTML = '<p>Использую Яндекс Метрику, чтобы понимать посещаемость сайта и переходы по ссылкам. Аналитические cookie включаются только с вашего согласия.</p><div class="analytics-actions"><button type="button" class="analytics-accept">Разрешить аналитику</button><button type="button" class="analytics-reject">Без аналитики</button><button type="button" class="analytics-info">Подробнее</button></div>';
+  document.body.append(notice);
+  const policy = document.createElement('dialog');
+  policy.className = 'analytics-policy';
+  policy.setAttribute('aria-label','Информация об аналитике');
+  policy.innerHTML = '<h2>Аналитика и cookie</h2><p>Владелец сайта — Кристина Михалева. По вопросам обработки данных можно написать в <a href="https://t.me/MikhalevaKS">Telegram</a>.</p><p>После вашего согласия сайт подключает Яндекс Метрику (счётчик №114140959), сервис ООО «ЯНДЕКС». Она получает технические сведения о посещении: IP-адрес, браузер и устройство, посещённые страницы, источник перехода, время и действия на сайте. Цель — анализ посещаемости и улучшение сайта. Вебвизор и запись содержимого форм отключены.</p><p>Метрика может сохранять аналитические cookie, в том числе _ym_uid (до 1 года), _ym_d (до 1 года), _ym_isad (до 2 дней), _ym_visorc (до 30 минут). Актуальные условия обработки и сроки определяет сервис Яндекса: <a href="https://yandex.ru/legal/confidential/" target="_blank" rel="noopener noreferrer">политика конфиденциальности</a>.</p><p>Выбор хранится в localStorage этого браузера. Отказ не ограничивает работу сайта. Изменить выбор и отозвать согласие можно кнопкой «Настройки аналитики» в подвале. Отзыв останавливает дальнейший сбор в этом браузере после перезагрузки; ранее переданные данные автоматически не удаляются. Cookie можно удалить в настройках браузера.</p><p>Переходы в Telegram и MAX открывают сторонние сервисы, где действуют их собственные правила обработки данных.</p><div class="analytics-actions"><button type="button" class="analytics-close" style="color:#111">Закрыть</button></div>';
+  document.body.append(policy);
+  const settings = document.createElement('button');
+  settings.type='button'; settings.className='analytics-settings'; settings.textContent='Настройки аналитики';
+  document.querySelector('.footer-bottom')?.append(settings);
+  settings.addEventListener('click',()=>{notice.hidden=false;notice.querySelector('button').focus();});
+  notice.querySelector('.analytics-info').addEventListener('click',()=>policy.showModal());
+  policy.querySelector('.analytics-close').addEventListener('click',()=>policy.close());
+  policy.addEventListener('click',event=>{if(event.target===policy)policy.close();});
+  function choose(value) {
+    try { localStorage.setItem(key,value); } catch { /* The selection applies to this page only. */ }
+    notice.hidden=true;
+    if(value==='accepted') start();
+    else if(active){ window.ym?.(counter,'destruct'); location.reload(); }
+  }
+  notice.querySelector('.analytics-accept').addEventListener('click',()=>choose('accepted'));
+  notice.querySelector('.analytics-reject').addEventListener('click',()=>choose('rejected'));
+  const saved=readConsent();
+  notice.hidden=saved==='accepted'||saved==='rejected';
+  if(saved==='accepted') start();
+}
 
