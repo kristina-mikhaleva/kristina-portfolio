@@ -695,7 +695,7 @@
   "reviews": [],
   "contact": {
     "title": "Давайте обсудим ваш проект?",
-    "description": "Расскажите о бизнесе и задаче — предложу план продвижения, сроки и объём работ. Напишите в Telegram, и я вернусь с первыми вопросами.",
+    "description": "Расскажите о вашем бизнесе и задаче в Telegram или MAX. Обсудим цели, подходящий формат работы, сроки и стоимость.",
     "cta": "Написать в Telegram",
     "handle": "@MikhalevaKS",
     "max": "https://max.ru/u/f9LHodD0cOJup6U-GtSqqcFU-ArPxOtEnXdkel9EkqRHWwIj6u_mkbaw5os"
@@ -1025,4 +1025,5 @@
     }
   ]
 }
+
 
