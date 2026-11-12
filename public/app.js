@@ -203,7 +203,7 @@ function revealSections() {
 
 async function init() {
   try{
-    const response=await fetch('content.json?v=20261030-gallery');if(!response.ok)throw Error('Не удалось загрузить содержание');data=await response.json();
+    const response=await fetch('content.json?v=20261112-contacts');if(!response.ok)throw Error('Не удалось загрузить содержание');data=await response.json();
     if(draft){try{const stored=localStorage.getItem('kristina-portfolio-draft');if(stored)data=JSON.parse(stored);}catch{/* No browser storage: use repository content. */}}
     const errors=validateContent(data);if(errors.length)throw Error(errors.join('; '));
     if(draft){try{data=await hydrateDraftMedia(data);}catch{/* Existing files remain usable when IndexedDB is disabled. */}}
@@ -267,4 +267,5 @@ function initAnalytics() {
   notice.hidden=saved==='accepted'||saved==='rejected';
   if(saved==='accepted') start();
 }
+
 
