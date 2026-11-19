@@ -87,8 +87,8 @@ function switchService(id, focus=false) {
   document.querySelectorAll('[data-service]').forEach(tab=>{const on=tab.dataset.service===id;tab.setAttribute('aria-selected',String(on));tab.tabIndex=on?0:-1;tab.querySelector('.tab-indicator').textContent=on?'✓':'↗';if(on&&focus)tab.focus({preventScroll:true});});
   if(!pricing){$('#service-panel').innerHTML=`<div id="panel-${e(id)}" role="tabpanel" aria-labelledby="tab-${e(id)}"><h3>${e(s.title)}</h3><p>${e(s.description)}</p></div>`;return;}
   const items=(list,cls='')=>list?.length?`<ul class="tariff-items ${cls}">${list.map(item=>`<li><span aria-hidden="true">✓</span>${e(item)}</li>`).join('')}</ul>`:'';
-  const tiers=pricing.tiers.map((t,tierIndex)=>`<article class="tariff-card${t.highlight?' tariff-highlight':''}"><div class="tariff-head"><span class="eyebrow">Тариф</span><h4>${e(t.name)}</h4><div class="tariff-price">${e(t.price)}${t.period?`<small>${e(t.period)}</small>`:''}</div>${t.description?`<p>${e(t.description)}</p>`:''}</div><div class="tariff-body"><div class="eyebrow">Что входит</div>${items(t.items)}${t.extra?.length?`<div class="tariff-extra"><div class="eyebrow">Дополнительно</div>${items(t.extra)}</div>`:''}${t.note?`<p class="tariff-note">${e(t.note)}</p>`:''}</div><a class="button lime" href="#contacts" data-tariff-service="${e(id)}" data-tariff-index="${tierIndex}">Выбрать тариф${arrow}</a></article>`).join('');
-  $('#service-panel').innerHTML=`<div class="service-panel pricing-panel" id="panel-${e(id)}" role="tabpanel" aria-labelledby="tab-${e(id)}" tabindex="0"><div class="pricing-intro"><div class="eyebrow">${String(i+1).padStart(2,'0')} / 03</div><h3>${e(s.title)}</h3><p>${e(s.description)}</p>${pricing.intro?`<p>${e(pricing.intro)}</p>`:''}${id==='smm'?`<p class="social-footnote">Instagram* принадлежит Meta, признанной экстремистской организацией и запрещённой в РФ.</p>`:''}</div><div class="tariff-grid">${tiers}</div></div>`;
+  const tiers=pricing.tiers.map((t,tierIndex)=>`<article class="tariff-card${t.highlight?' tariff-highlight':''}"><div class="tariff-head"><span class="eyebrow">Тариф</span><h4>${e(t.name)}</h4><div class="tariff-price">${e(t.price)}${t.period?`<small>${e(t.period)}</small>`:''}</div>${t.description?`<p>${e(t.description)}</p>`:''}</div><div class="tariff-body"><div class="eyebrow">Что входит</div>${items(t.items)}${t.extra?.length?`<div class="tariff-extra"><div class="eyebrow">Дополнительно</div>${items(t.extra)}</div>`:''}${t.note?`<p class="tariff-note">${e(t.note)}</p>`:''}</div><a class="button lime" href="#contacts" data-tariff-service="${e(id)}" data-tariff-index="${tierIndex}">${e(pricing.cta||'Выбрать тариф')}${arrow}</a></article>`).join('');
+  $('#service-panel').innerHTML=`<div class="service-panel pricing-panel" id="panel-${e(id)}" role="tabpanel" aria-labelledby="tab-${e(id)}" tabindex="0"><div class="pricing-intro"><div class="eyebrow">${String(i+1).padStart(2,'0')} / 03</div><h3>${e(s.title)}</h3><p>${e(s.description)}</p>${pricing.intro?`<p>${e(pricing.intro)}</p>`:''}${id==='smm'?`<p class="social-footnote">Instagram* принадлежит Meta, признанной экстремистской организацией и запрещённой в РФ.</p>`:''}</div><div class="tariff-grid">${tiers}</div>${pricing.note?`<p class="tariff-note">${e(pricing.note)}</p>`:''}</div>`;
 }
 
 function faq() {
@@ -203,7 +203,7 @@ function revealSections() {
 
 async function init() {
   try{
-    const response=await fetch('content.json?v=20261112-contacts');if(!response.ok)throw Error('Не удалось загрузить содержание');data=await response.json();
+    const response=await fetch('content.json?v=20261119-pricing');if(!response.ok)throw Error('Не удалось загрузить содержание');data=await response.json();
     if(draft){try{const stored=localStorage.getItem('kristina-portfolio-draft');if(stored)data=JSON.parse(stored);}catch{/* No browser storage: use repository content. */}}
     const errors=validateContent(data);if(errors.length)throw Error(errors.join('; '));
     if(draft){try{data=await hydrateDraftMedia(data);}catch{/* Existing files remain usable when IndexedDB is disabled. */}}
@@ -267,5 +267,6 @@ function initAnalytics() {
   notice.hidden=saved==='accepted'||saved==='rejected';
   if(saved==='accepted') start();
 }
+
 
 
