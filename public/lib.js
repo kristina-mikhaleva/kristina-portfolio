@@ -53,6 +53,8 @@ export function telegramDraftURL(base, message = '') {
   if (url.protocol !== 'https:' || url.hostname !== 't.me' || !/^\/[a-zA-Z0-9_]+\/?$/.test(url.pathname)) return '';
   url.search = '';
   url.hash = '';
-  if (message) url.searchParams.set('text', message);
+  // Telegram clients expect URI-encoded spaces (%20), not form-style plus signs.
+  if (message) url.search = '?text=' + encodeURIComponent(message);
   return url.href;
 }
+

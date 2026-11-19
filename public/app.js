@@ -1,4 +1,4 @@
-import { escapeHTML as e, safeURL, published, formatDuration, validateContent, getTariffSelection, telegramDraftURL } from './lib.js';
+import { escapeHTML as e, safeURL, published, formatDuration, validateContent, getTariffSelection, telegramDraftURL } from './lib.js?v=20261119-telegram';
 import { hydrateDraftMedia } from './draft-store.js';
 
 const $ = s => document.querySelector(s);
@@ -267,6 +267,7 @@ function initAnalytics() {
   notice.hidden=saved==='accepted'||saved==='rejected';
   if(saved==='accepted') start();
 }
+
 
 
 
